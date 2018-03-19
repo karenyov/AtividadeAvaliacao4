@@ -2,6 +2,7 @@ package aula;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
@@ -15,6 +16,7 @@ import static org.hamcrest.Matchers.either;
 import static org.hamcrest.Matchers.isIn;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 
 import org.junit.Test;
@@ -73,37 +75,78 @@ public class SenaTest {
 	 */
 	@Test
 	public void exercC() throws Exception {
-		List<Integer> listaRecebida = sena.getSena(10);
-		// assertThat(listaRecebida, sena.comparar(listaRecebida));
+		assertThat(sena.getSena(10), ordenado());
+	}
+
+	private TypeSafeMatcher<List<Integer>> ordenado() {
+		return new TypeSafeMatcher<List<Integer>>() {
+
+			@Override
+			protected boolean matchesSafely(List<Integer> lista) {
+				for (int i = 0; i < lista.size() - 1; i++) {
+					if (lista.get(i) <= lista.get(i + 1))
+						return true;
+				}
+				return false;
+			}
+
+			@Override
+			public void describeTo(Description description) {
+				description.appendText("describe the error has you like more");
+			}
+		};
 	}
 
 	/**
-	 * d) getSena(10) retorna um array sem elementos duplicados.
-	 *  Será necessário criar um método para comparar os elementos
-usando uma implementação da classe abstrata TypeSafeMatcher;
+	 * d) getSena(10) retorna um array sem elementos duplicados. Será necessário
+	 * criar um método para comparar os elementos usando uma implementação da
+	 * classe abstrata TypeSafeMatcher;
+	 * 
 	 * @throws Exception
 	 */
 	@Test
 	public void exercD() throws Exception {
+		assertThat(sena.getSena(10), duplicado());
+	}
+	
+	private TypeSafeMatcher<List<Integer>> duplicado() {
+		return new TypeSafeMatcher<List<Integer>>() {
 
+			@Override
+			protected boolean matchesSafely(List<Integer> lista) {
+				for (int i = 0; i < lista.size() - 1; i++) {
+					if (lista.get(i) == lista.get(i + 1))
+						return true;
+				}
+				return false;
+			}
+
+			@Override
+			public void describeTo(Description description) {
+				description.appendText("describe the error has you like more");
+			}
+		};
 	}
 
 	/**
-	 * e) getSena(null) neste caso o indicado seria usar o atributo expected=Exception.class na anotação @Test. Porém aqui
-será obrigatório usar uma @Rule para ExpectedException;
-	 * @throws Exception 
+	 * e) getSena(null) neste caso o indicado seria usar o atributo
+	 * expected=Exception.class na anotação @Test. Porém aqui será obrigatório
+	 * usar uma @Rule para ExpectedException;
+	 * 
+	 * @throws Exception
 	 */
-    @Test
+	@Test
 	public void exercE() throws Exception {
 		thrown.expect(Exception.class);
 		sena.getSena(null);
 	}
 
-
-    /**
-     * f) getSena(5) use uma @Rule para testar se a mensagem da exceção possui o texto "Mínimo 6";
-     * @throws Exception
-     */
+	/**
+	 * f) getSena(5) use uma @Rule para testar se a mensagem da exceção possui o
+	 * texto "Mínimo 6";
+	 * 
+	 * @throws Exception
+	 */
 	@Test
 	public void exercF() throws Exception {
 		thrown.expect(Exception.class);
@@ -112,7 +155,9 @@ será obrigatório usar uma @Rule para ExpectedException;
 	}
 
 	/**
-	 * g) getSena(12) use uma @Rule para testar se a mensagem da exceção possui o texto "Máximo 12";
+	 * g) getSena(12) use uma @Rule para testar se a mensagem da exceção possui
+	 * o texto "Máximo 12";
+	 * 
 	 * @throws Exception
 	 */
 	@Test
